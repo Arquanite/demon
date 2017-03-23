@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+//funkcja forkująca rodzica
 widelec(){
     pid_t pid;
     pid = fork();
