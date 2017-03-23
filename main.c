@@ -5,7 +5,7 @@ widelec(){
     pid_t pid;
     pid = fork();
     if(pid < 0) {
-        exit(EXIT_FAILURE)
+        exit(EXIT_FAILURE);
     }
     if(pid > 0){
         exit(EXIT_SUCCESS);
