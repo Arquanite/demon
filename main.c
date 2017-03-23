@@ -9,6 +9,7 @@
 void widelec(){
 	syslog(LOG_INFO, "Użycie widelca");
 	
+	//forkowanie rodzica
 	pid_t pid, sid;
 	pid = fork();
 	if(pid < 0){
@@ -18,17 +19,25 @@ void widelec(){
 	if(pid > 0){
 		exit(EXIT_SUCCESS);
 	}
+	//zmiana maski plików
 	umask(0);
-
+	//tworzenie SIDa dla dziecka
 	sid = setsid();
 	if(sid < 0){
 		syslog(LOG_ERR, "Error: could not create sid for child process");
 		exit(EXIT_FAILURE);
 	}
-
+	//zmiana katalogu
 	if((chdir("/")) < 0) {
 		syslog(LOG_ERR, "Error: could not change working directory");
 	}
+	//zamykanie STD
+	close(STDIN_FILENO);
+	close(STDOUT_FILENO);
+	close(STDERR_FILENO);
+
+	//TU TRZEBA ZROBIĆ INICJALIZACJĘ NASZEGO DEMONA (specyficzna dla naszego)
+	
 }
 
 int main(int argc, int *argv[]){
