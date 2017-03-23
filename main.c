@@ -3,6 +3,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <syslog.h>
+#include <dirent.h> // opendir
 #include <unistd.h>
 
 //funkcja forkująca rodzica
@@ -19,15 +20,32 @@ void widelec(){
 	umask(0);
 }
 
-int main(int argc, int *argv[]){
+int check_directory(const char *name){
+	DIR* dir = opendir(name);
+	if(dir){
+    	printf("Katalog %s istnieje i ma się dobrze\n", name);
+	    closedir(dir);
+	    return 1;
+	}
+	else {
+		perror(name);
+		return 0;
+	}
+}
+
+int main(int argc, char *argv[]){
 	if(argc < 3){
 		printf("Jesteś debilem debilu :u\n");
 		return 1;
 	}
-	openlog("demon_log", LOG_PID|LOG_CONS, LOG_USER);
+	
+	if(!(check_directory(argv[1]) && check_directory(argv[2]))){
+		return 1;
+	}
+	
+	openlog("demon_log", LOG_PID | LOG_CONS, LOG_USER);
 	syslog(LOG_INFO, "Start programu");
 	widelec();
-	printf("Wyglada na to, ze dziala\n");
 
 	closelog();
 	return 0;
