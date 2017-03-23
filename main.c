@@ -9,7 +9,7 @@
 //funkcja forkująca rodzica
 void widelec(){
 	syslog(LOG_INFO, "Użycie widelca");
-	
+
 	//forkowanie rodzica
 	pid_t pid, sid;
 	pid = fork();
@@ -38,7 +38,7 @@ void widelec(){
 	close(STDERR_FILENO);
 
 	//TU TRZEBA ZROBIĆ INICJALIZACJĘ NASZEGO DEMONA (specyficzna dla naszego)
-	
+
 }
 
 int check_directory(const char *name){
@@ -59,11 +59,11 @@ int main(int argc, char *argv[]){
 		printf("Jesteś debilem debilu :u\n");
 		return 1;
 	}
-	
+
 	if(!(check_directory(argv[1]) && check_directory(argv[2]))){
 		return 1;
 	}
-	
+
 	openlog("demon_log", LOG_PID | LOG_CONS, LOG_USER);
 	syslog(LOG_INFO, "Start programu");
 	widelec();
