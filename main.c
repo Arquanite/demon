@@ -49,6 +49,11 @@ int main(int argc, int *argv[]){
 	syslog(LOG_INFO, "Start programu");
 	widelec();
 	printf("Wyglada na to, ze dziala\n");
+	while(1){
+		syslog(LOG_INFO, "Biegam sobie xd");
+		sleep(5);
+		syslog(LOG_INFO, "Dalej se biegam");
+	}
 
 	closelog();
 	return 0;
