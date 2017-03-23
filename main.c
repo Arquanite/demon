@@ -18,6 +18,10 @@ void widelec(){
 }
 
 int main(int argc, int *argv[]){
+	if(argc < 3){
+		printf("Jesteś debilem debilu :u\n");
+		return 1;
+	}
     printf("Wyglada na to, ze dziala\n");
     return 0;
 }
