@@ -66,6 +66,7 @@ int main(int argc, char *argv[]){
 
     config c = parse_args(argc, argv);
 
+    // debug info, wyjebuje się kiedy nie podasz folderów, nie jest to problem, bo domyślnie się to nie wyświetla
     printf("is_valid: %d \n"
            "sleep_time: %d \n"
            "recursive_sync: %d \n"
@@ -78,6 +79,7 @@ int main(int argc, char *argv[]){
         printf("BŁĄÐ: nieprawidłowa składnia\n");
         return EXIT_FAILURE;
     }
+
     if(!(check_directory(c.source_dir) && check_directory(c.dest_dir))){
         return EXIT_FAILURE;
     }

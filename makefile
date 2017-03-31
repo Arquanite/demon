@@ -1,8 +1,7 @@
-main: main.c build
-	gcc -o build/main main.c
+SOURCES := $(wildcard sources/*.c)
 
-run: main
-	build/main &
+all: build
+	gcc -o build/demon666 $(SOURCES) -I headers #all in one
 
 build:
 	mkdir build
