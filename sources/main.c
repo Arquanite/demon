@@ -42,7 +42,6 @@ void widelec(){
     close(STDERR_FILENO);
 
     //TU TRZEBA ZROBIĆ INICJALIZACJĘ NASZEGO DEMONA (specyficzna dla naszego)
-
 }
 
 int check_directory(const char *name){
@@ -83,8 +82,8 @@ int main(int argc, char *argv[]){
     if(!(check_directory(c.source_dir) && check_directory(c.dest_dir))){
         return EXIT_FAILURE;
     }
-
     printf("Odsyłam demona do sali 106...\n"); return 666; //pilnuje demona żeby nie uciek :u
+
     openlog("demon_log", LOG_PID | LOG_CONS, LOG_USER);
     syslog(LOG_INFO, "Start programu");
     widelec();
