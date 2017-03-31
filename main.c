@@ -15,7 +15,7 @@ typedef struct {
     bool is_valid;
     int sleep_time;
     bool recursive_sync;
-    int mmap_size_threshold;
+    size_t mmap_size_threshold;
     char *source_dir;
     char *dest_dir;
 } config;
@@ -71,7 +71,7 @@ int check_directory(const char *name){
 
 int parse_time(const char *time){
     int seconds = 0;
-    for(int i; i<strlen(time)-1; i++){
+    for(int i=0; i<strlen(time)-1; i++){
         if(time[i] >=48 && time[i] <= 57){
             seconds *= 10;
             seconds += (time[i]-48);
@@ -102,6 +102,45 @@ int parse_time(const char *time){
     return seconds;
 }
 
+size_t parse_size(const char *size){
+    size_t bytes = 0;
+    for(int i=0; i<strlen(size)-1; i++){
+        if(size[i] >=48 && size[i] <= 57){
+            bytes *= 10;
+            bytes += (size[i]-48);
+        }
+        else return -1;
+    }
+    char last = size[strlen(size)-1];
+    if(last >=48 && last <= 57){
+        bytes *= 10;
+        bytes += (last-48);
+    }
+    else {
+        switch (last) {
+        case 'K':
+        case 'k':
+            bytes *= 1024;
+            break;
+
+        case 'M':
+        case 'm':
+            bytes *= 1024*1024;
+            break;
+
+        case 'G':
+        case 'g':
+            bytes *= 1024*1024*1024;
+            break;
+
+        default:
+            return -1;
+            break;
+        }
+    }
+    return bytes;
+}
+
 config parse_args(int argc, char *argv[]){
     config c = DEFAULT_CONFIG;
     if(argc <3) return c;
@@ -129,7 +168,12 @@ config parse_args(int argc, char *argv[]){
                 break;
 
             case 'm':
-                c.sleep_time = strtol(argv[i+1], NULL, 10);
+                c.mmap_size_threshold = parse_size(argv[i+1]);
+                if(c.mmap_size_threshold == -1){
+                    printf("BŁĄÐ: nieprawidłowy format rozmiaru: %s\n", argv[i+1]);
+                    return c;
+                }
+                i++;
                 break;
 
             default:
@@ -139,10 +183,12 @@ config parse_args(int argc, char *argv[]){
             }
         }
         else {
-            printf("%s\n", arg);
+            if(dir_count == 0) c.source_dir = arg;
+            else if(dir_count == 1) c.dest_dir = arg;
+            dir_count++;
         }
     }
-    c.is_valid = true;
+    if(dir_count == 2) c.is_valid = true;
     return c;
 }
 
@@ -157,8 +203,10 @@ int main(int argc, char *argv[]){
     printf("is_valid: %d \n"
            "sleep_time: %d \n"
            "recursive_sync: %d \n"
-           "mmap_size_threshold: %d \n"
-           ,c.is_valid, c.sleep_time, c.recursive_sync, c.mmap_size_threshold);
+           "mmap_size_threshold: %zd \n"
+           "source_dir: %s \n"
+           "dest_dir: %s \n"
+           ,c.is_valid, c.sleep_time, c.recursive_sync, c.mmap_size_threshold, c.source_dir, c.dest_dir);
 
     if(!c.is_valid){
         printf("BŁĄÐ: nieprawidłowa składnia\n");
