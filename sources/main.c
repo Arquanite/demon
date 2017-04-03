@@ -73,28 +73,6 @@ void widelec(){
     //TU TRZEBA ZROBIĆ INICJALIZACJĘ NASZEGO DEMONA (specyficzna dla naszego)
 }
 
-bool check_directory(const char *name){
-    DIR* dir = opendir(name);
-    if(dir){
-        printf("Katalog %s istnieje i ma się dobrze\n", name);
-        closedir(dir);
-        return true;
-    }
-    else {
-        perror(name);
-        return false;
-    }
-}
-
-bool is_directory(const char *name){
-    DIR* dir = opendir(name);
-    if(dir){
-        closedir(dir);
-        return true;
-    }
-    return false;
-}
-
 int main(int argc, char *argv[]){
     /*if(argc < 3){
         printf("Jesteś debilem debilu :u\n");

@@ -4,7 +4,7 @@
 #include <stdlib.h> // size_t
 #include "bool.h"
 
-// Struktura odpowiadająca za przechowywanie bieżącej konfiguracji programu
+/* Struktura odpowiadająca za przechowywanie bieżącej konfiguracji programu */
 
 typedef struct {
     bool is_valid; // Określa czy dana konfiguracja jest prawidłowa
