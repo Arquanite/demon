@@ -118,7 +118,7 @@ int main(int argc, char *argv[]){
     widelec();
     printf("Wyglada na to, ze dziala\n");
 
-    while(1){
+    while(true){
         syslog(LOG_INFO, "Biegam sobie xd");
         sleep(5);
         syslog(LOG_INFO, "Dalej se biegam");
