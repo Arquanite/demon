@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
+#include <string.h>
+#include <dirent.h>
 
 void create_file(char* path){
 	mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH; // file permissions
@@ -63,12 +65,41 @@ void read_file(char* path1, char* path2){
 	close(fd2);
 }
 
+int check_directory(const char *name){
+    DIR* dir = opendir(name);
+    if(dir){
+        printf("Katalog %s istnieje i ma się dobrze\n", name);
+        closedir(dir);
+        return 1;
+    }
+    else {
+        perror(name);
+        return 0;
+    }
+}
+
+void read_directory(char *path){
+	struct dirent *ent;
+	if (check_directory(path)){
+		DIR *dir = opendir(path);
+		while ((ent = readdir (dir)) != NULL){
+			int len = strlen(path);
+			len += strlen(ent->d_name)+10;
+			char tmp[len];
+			snprintf(tmp, len,"%s/%s", path, ent->d_name);
+			printf("%s/%s\n",path, ent->d_name); 			
+			printf ("%s\n", tmp);
+		}
+		closedir(dir);
+	}
+}
+
 
 int main(int argc,char *argv[]){
 	//path to new file
 	char* path = argv[1];
-	char* path2 = argv[2];
-	read_file(path,path2);
-
+//	char* path2 = argv[2];
+//	read_file(path,path2);
+	read_directory(path); 
 	return 0;
 }
