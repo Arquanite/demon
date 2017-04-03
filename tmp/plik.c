@@ -83,12 +83,29 @@ void read_directory(char *path){
 	if (check_directory(path)){
 		DIR *dir = opendir(path);
 		while ((ent = readdir (dir)) != NULL){
+			if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name,"..") == 0) continue;			
 			int len = strlen(path);
 			len += strlen(ent->d_name)+10;
 			char tmp[len];
-			snprintf(tmp, len,"%s/%s", path, ent->d_name);
-			printf("%s/%s\n",path, ent->d_name); 			
+			snprintf(tmp, len,"%s/%s", path, ent->d_name);			
 			printf ("%s\n", tmp);
+		}
+		closedir(dir);
+	}
+}
+
+void read_directory_recursive(char *path){
+	struct dirent *ent;
+	if (check_directory(path)){
+		DIR *dir = opendir(path);
+		while ((ent = readdir (dir)) != NULL){
+			if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name,"..") == 0) continue;
+			int len = strlen(path);
+			len += strlen(ent->d_name)+10;
+			char tmp[len];
+			snprintf(tmp, len,"%s/%s", path, ent->d_name); 			
+			printf ("%s\n", tmp);
+			if(check_directory(tmp)) read_directory_recursive(tmp);
 		}
 		closedir(dir);
 	}
@@ -100,6 +117,6 @@ int main(int argc,char *argv[]){
 	char* path = argv[1];
 //	char* path2 = argv[2];
 //	read_file(path,path2);
-	read_directory(path); 
+	read_directory_recursive(path); 
 	return 0;
 }
