@@ -1,6 +1,5 @@
 #ifndef BOOL_H
 #define BOOL_H
-
 // Dodaje typ bool do języka C
 
 #define true 1

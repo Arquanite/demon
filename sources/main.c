@@ -86,6 +86,15 @@ bool check_directory(const char *name){
     }
 }
 
+bool is_directory(const char *name){
+    DIR* dir = opendir(name);
+    if(dir){
+        closedir(dir);
+        return true;
+    }
+    return false;
+}
+
 int main(int argc, char *argv[]){
     /*if(argc < 3){
         printf("Jesteś debilem debilu :u\n");
