@@ -5,27 +5,17 @@
 #include <sys/stat.h>
 #include <assert.h>
 
-const char* get_file_type (const char* path)
-{
-  struct stat st;
-  lstat (path, &st);
-  if (S_ISLNK (st.st_mode))
-    return "symbolic link";
-  else if (S_ISDIR (st.st_mode))
-    return "directory";
-  else if (S_ISCHR (st.st_mode))
-    return "character device";
-  else if (S_ISBLK (st.st_mode))
-    return "block device";
-    else if (S_ISFIFO (st.st_mode))
-      return "fifo";
-    else if (S_ISSOCK (st.st_mode))
-      return "socket";
-    else if (S_ISREG (st.st_mode))
-      return "regular file";
-    else
-      /* Unexpected. Each entry should be one of the types above.  */
-      assert (0);
+FILE_TYPE get_file_type(const char* path){
+    struct stat st;
+    lstat(path, &st);
+    if(S_ISLNK(st.st_mode)) return SYMBOLIC_LINK;
+    else if(S_ISDIR(st.st_mode)) return DIRECTORY;
+    else if(S_ISCHR(st.st_mode)) return CHARACTER_DEVICE;
+    else if(S_ISBLK(st.st_mode)) return BLOCK_DEVICE;
+    else if(S_ISFIFO(st.st_mode))return FIFO;
+    else if(S_ISSOCK(st.st_mode))return SOCKET;
+    else if(S_ISREG(st.st_mode)) return REGULAR_FILE;
+    else return UNKNOWN;
 }
 
 bool check_directory(const char *name){
