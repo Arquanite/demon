@@ -1,6 +1,12 @@
 #include "filelist.h"
 
-file_list *add(file_list *list, char *name, char *path, bool mmap){
+file_list *list_create(){
+    file_list *list = malloc(sizeof(file_list));
+    list->next = NULL;
+    return list;
+}
+
+file_list *list_add(file_list *list, char *name, char *path, bool mmap){
     while(list->next != NULL) list = (file_list*)list->next;
     list->next = malloc(sizeof(file_list));
     list = (file_list*)list->next;
@@ -11,7 +17,7 @@ file_list *add(file_list *list, char *name, char *path, bool mmap){
     return list;
 }
 
-void remove_all(file_list *first){
+void list_remove_all(file_list *first){
     if(first == NULL) return;
     while(first->next != NULL){
         file_list *prev = first;

@@ -39,6 +39,9 @@
 #include "bool.h"
 #include "config.h"
 #include "parse.h"
+#include "dir.h"
+
+#include "filelist.h"
 
 //funkcja forkująca rodzica
 void widelec(){
@@ -82,13 +85,13 @@ int main(int argc, char *argv[]){
     config c = parse_args(argc, argv);
 
     // debug info, wyjebuje się kiedy nie podasz folderów, nie jest to problem, bo domyślnie się to nie wyświetla
-    printf("is_valid: %d \n"
+    /*printf("is_valid: %d \n"
            "sleep_time: %d \n"
            "recursive_sync: %d \n"
            "mmap_size_threshold: %zd \n"
            "source_dir: %s \n"
            "dest_dir: %s \n"
-           ,c.is_valid, c.sleep_time, c.recursive_sync, c.mmap_size_threshold, c.source_dir, c.dest_dir);
+           ,c.is_valid, c.sleep_time, c.recursive_sync, c.mmap_size_threshold, c.source_dir, c.dest_dir); */
 
     if(!c.is_valid){
         printf("BŁĄÐ: nieprawidłowa składnia\n");
@@ -98,7 +101,20 @@ int main(int argc, char *argv[]){
     if(!(check_directory(c.source_dir) && check_directory(c.dest_dir))){
         return EXIT_FAILURE;
     }
-    printf("Odsyłam demona do sali 106...\n"); return 666; //pilnuje demona żeby nie uciek :u
+
+    file_list *list = list_create();
+    list_add(list, "ddd", "ffff", true);
+    list_add(list, "121", "123", true);
+    list_add(list, "1234", "1233", true);
+
+    file_list *begin = list;
+    while(list->next != NULL){
+        list = list->next;
+        printf("%s\n", list->name);
+    }
+
+    list_remove_all(begin);
+    printf("Odsyłam demona do sali 106...\n"); return 0; //pilnuje demona żeby nie uciek :u
 
     openlog("demon_log", LOG_PID | LOG_CONS, LOG_USER);
     syslog(LOG_INFO, "Start programu");
