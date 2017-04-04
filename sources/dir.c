@@ -56,7 +56,7 @@ file_list *list_directory(const char *name){
     dir = opendir(name);
     while ((entry = readdir(dir)) != NULL){
         if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name,"..") == 0) continue;
-        const char *type;
+        FILE_TYPE type;
         strncpy(entry_path + path_len, entry->d_name, sizeof(entry_path) - path_len);
         type = get_file_type(entry_path);
         list_add(lista, entry->d_name, name, true);
@@ -81,11 +81,11 @@ file_list *list_directory_recursive(char *name, file_list *lista){
     dir = opendir(name);
     while ((entry = readdir(dir)) != NULL){
         if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name,"..") == 0) continue;
-        const char *type;
+        FILE_TYPE type;
         strncpy(entry_path + path_len, entry->d_name, sizeof(entry_path) - path_len);
         type = get_file_type(entry_path);
         list_add(lista, entry->d_name, name, true);
-        if(type == "directory") list_directory_recursive(entry_path, lista);
+        if(type == DIRECTORY) list_directory_recursive(entry_path, lista);
     //    printf("%-18s: %s\n", type, entry_path);
     }
     closedir(dir);
