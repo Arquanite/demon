@@ -7,4 +7,5 @@ add_executable(${PROJECT_NAME} "sources/main.c"
                                "headers/config.h" "sources/config.c"
                                "headers/dir.h" "sources/dir.c"
                                "headers/filelist.h" "sources/filelist.c"
+                               "headers/sync.h" "sources/sync.c"
                                "headers/bool.h")

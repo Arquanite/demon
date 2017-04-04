@@ -116,7 +116,7 @@ int main(int argc, char *argv[]){
     list_remove_all(begin);
     printf("Odsyłam demona do sali 106...\n"); return 0; //pilnuje demona żeby nie uciek :u
 
-    openlog("demon_log", LOG_PID | LOG_CONS, LOG_USER);
+ /*   openlog("demon_log", LOG_PID | LOG_CONS, LOG_USER);
     syslog(LOG_INFO, "Start programu");
     widelec();
     printf("Wyglada na to, ze dziala\n");
@@ -127,7 +127,7 @@ int main(int argc, char *argv[]){
         syslog(LOG_INFO, "Dalej se biegam");
     }
 
-    closelog();
+    closelog(); */
     return 0;
 }
 
