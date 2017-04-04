@@ -4,6 +4,17 @@
 #include "bool.h"
 #include "filelist.h"
 
+enum FILE_TYPE {
+    SYMBOLIC_LINK,
+    DIRECTORY,
+    CHARACTER_DEVICE,
+    BLOCK_DEVICE,
+    FIFO,
+    SOCKET,
+    REGULAR_FILE,
+    UNKNOWN
+};
+
 /* Sprawdza czy podany katalog rzeczywiście jest katalogiem,
  * czy istnieje oraz czy użytkownik ma prawo otworzyć ten katalog.
  * w razie błędu wyświetla komunikat na stdout. */
