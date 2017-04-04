@@ -119,6 +119,12 @@ int main(int argc, char *argv[]){
 
     // End of przykład
 
+    list = list_directory_recursive(c.source_dir, list);
+    while(list->next != NULL){
+        list = list->next;
+        printf("%s/%s\n", list->path, list->name);
+    }
+
     printf("Odsyłam demona do sali 106...\n"); return 0; //pilnuje demona żeby nie uciek :u
 
  /*   openlog("demon_log", LOG_PID | LOG_CONS, LOG_USER);
@@ -133,6 +139,7 @@ int main(int argc, char *argv[]){
     }
 
     closelog(); */
+
     return 0;
 }
 
