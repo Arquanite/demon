@@ -4,7 +4,7 @@
 #include "bool.h"
 #include "filelist.h"
 
-enum FILE_TYPE {
+typedef enum {
     SYMBOLIC_LINK,
     DIRECTORY,
     CHARACTER_DEVICE,
@@ -13,11 +13,11 @@ enum FILE_TYPE {
     SOCKET,
     REGULAR_FILE,
     UNKNOWN
-};
+} FILE_TYPE;
 
 /* Sprawdza jakiego typu jest plik podany w parametrze:
  * symlink, katalog, zwykły plik itp. */
-const char* get_file_type (const char* path);
+FILE_TYPE get_file_type(const char* path);
 
 /* Sprawdza czy podany katalog rzeczywiście jest katalogiem,
  * czy istnieje oraz czy użytkownik ma prawo otworzyć ten katalog.
