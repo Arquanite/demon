@@ -40,7 +40,7 @@
 #include "config.h"
 #include "parse.h"
 #include "dir.h"
-
+#include "sync.h"
 #include "filelist.h"
 
 //funkcja forkująca rodzica

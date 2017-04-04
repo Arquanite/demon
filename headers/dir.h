@@ -15,6 +15,10 @@ enum FILE_TYPE {
     UNKNOWN
 };
 
+/* Sprawdza jakiego typu jest plik podany w parametrze:
+ * symlink, katalog, zwykły plik itp. */
+const char* get_file_type (const char* path);
+
 /* Sprawdza czy podany katalog rzeczywiście jest katalogiem,
  * czy istnieje oraz czy użytkownik ma prawo otworzyć ten katalog.
  * w razie błędu wyświetla komunikat na stdout. */
