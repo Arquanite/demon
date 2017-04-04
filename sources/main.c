@@ -39,6 +39,7 @@
 #include "bool.h"
 #include "config.h"
 #include "parse.h"
+#include "sync.h"
 
 //funkcja forkująca rodzica
 void widelec(){
@@ -98,7 +99,9 @@ int main(int argc, char *argv[]){
     if(!(check_directory(c.source_dir) && check_directory(c.dest_dir))){
         return EXIT_FAILURE;
     }
-    printf("Odsyłam demona do sali 106...\n"); return 666; //pilnuje demona żeby nie uciek :u
+
+
+//    printf("Odsyłam demona do sali 106...\n"); return 666; //pilnuje demona żeby nie uciek :u
 
  /*   openlog("demon_log", LOG_PID | LOG_CONS, LOG_USER);
     syslog(LOG_INFO, "Start programu");
@@ -112,6 +115,8 @@ int main(int argc, char *argv[]){
     }
 
     closelog(); */
+
+
     return 0;
 }
 
