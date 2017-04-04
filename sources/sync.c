@@ -1,5 +1,4 @@
 #include "sync.h"
-#include "filelist.h"
 #include "dir.h"
 
 #include <fcntl.h>
@@ -67,7 +66,7 @@ void read_file(char* path1, char* path2){
     close(fd2);
 }
 
-void read_directory(char *path){
+file_list* read_directory(char *path){
     struct dirent *ent;
     if (check_directory(path)){
         DIR *dir = opendir(path);

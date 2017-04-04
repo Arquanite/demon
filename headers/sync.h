@@ -2,6 +2,7 @@
 #define SYNC_H
 
 #include <stdlib.h>
+#include "filelist.h"
 
 /* Tworzy pusty plik */
 void create_file(char *path);
@@ -13,7 +14,7 @@ ssize_t write_all (int fd, const void* buffer, size_t count);
 void read_file(char* path1, char* path2);
 
 /* Wypisuje zawartość katalogu */
-void read_directory(char *path);
+file_list *read_directory(char *path);
 
 /* Wypisuje rekursywnie zawartość katalogu i wszystkich jego podkatalogów */
 void read_directory_recursive(char *path);
