@@ -12,13 +12,16 @@ struct file_list {
     char *name; // nazwa pliku/katalogu
     char *path; // ścieżka do katalogu nadrzędnego
     bool mmap; // czy plik powinien być kopiowany za pomocą mmap
-    struct file_list *next; // wskaźnik na następny element
+    file_list *next; // wskaźnik na następny element
 };
 
 file_list *list_create();
 
 /* Dodaje nowy element do listy, zwraca adres ostatniego elementu */
 file_list *list_add(file_list *list, char *name, char *path, bool mmap);
+
+/* Dodaje na koniec listy pierwszej liste drugą */
+void list_append(file_list *first, file_list *next);
 
 /* Usuwa wszystkie elementy listy */
 void list_remove_all(file_list *first);

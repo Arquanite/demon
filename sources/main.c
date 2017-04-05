@@ -109,6 +109,12 @@ int main(int argc, char *argv[]){
     list_add(list, "121", "123", true);
     list_add(list, "1234", "1233", true);
 
+    file_list *bb = list_create();
+    list_add(bb, "121bbbb", "1bbb23", true);
+    list_add(bb, "bbbb1234", "123bbb3", true);
+
+    list_append(list, bb);
+
     file_list *begin = list;
     while(list->next != NULL){
         list = list->next;
@@ -118,12 +124,13 @@ int main(int argc, char *argv[]){
     list_remove_all(begin);
 
     // End of przykład
-
-    list = list_directory_recursive(c.source_dir, list);
+    list = list_directory_recursive(c.source_dir);
+    begin = list;
     while(list->next != NULL){
         list = list->next;
         printf("%s/%s\n", list->path, list->name);
     }
+    list_remove_all(begin);
 
     printf("Odsyłam demona do sali 106...\n"); return 0; //pilnuje demona żeby nie uciek :u
 
