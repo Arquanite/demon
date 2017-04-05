@@ -1,6 +1,6 @@
-#Demon synchronizujący dwa podkatalogi
+#Demon synchronizujący dwa podkatalogi (np. A i B)
 
-  Program który otrzymuje co najmniej dwa argumenty: ścieżkę źródłową, ścieżkę docelowa.
+Program który otrzymuje co najmniej dwa argumenty: ścieżkę źródłową, ścieżkę docelowa.
 Jeżeli któraś ze ścieżek nie jest katalogiem program powraca natychmiast z komunikatem błędu.
 W przeciwnym wypadku staje się demonem. Demon wykonuje następujące czynności: śpi przez piec minut 
 (czas spania można zmieniać przy pomocy dodatkowego opcjonalnego argumentu),
