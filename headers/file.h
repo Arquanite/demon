@@ -3,17 +3,7 @@
 
 #include "bool.h"
 #include "filelist.h"
-
-typedef enum {
-    SYMBOLIC_LINK,
-    DIRECTORY,
-    CHARACTER_DEVICE,
-    BLOCK_DEVICE,
-    FIFO,
-    SOCKET,
-    REGULAR_FILE,
-    UNKNOWN
-} FILE_TYPE;
+#include "filetype.h"
 
 /* Sprawdza jakiego typu jest plik podany w parametrze:
  * symlink, katalog, zwykły plik itp. */

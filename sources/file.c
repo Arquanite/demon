@@ -1,4 +1,4 @@
-#include "dir.h"
+#include "file.h"
 #include <dirent.h>
 #include <stdio.h>
 #include <string.h>
@@ -62,7 +62,7 @@ file_list *list_directory(char *path){
         snprintf(full_path, len, "%s/%s", path, entry->d_name);
         FILE_TYPE type;
         type = get_file_type(full_path);
-        if(type != DIRECTORY) list_add(list, entry->d_name, path, true);
+        if(type != DIRECTORY) list_add(list, entry->d_name, path, type, true);
     }
     closedir(dir);
     return list;
@@ -85,7 +85,7 @@ file_list *list_directory_recursive(char *path){
         type = get_file_type(full_path);
         //printf("%s/%s\n", path, entry->d_name);
 
-        list_add(list, entry->d_name, path, true);
+        list_add(list, entry->d_name, path, type, true);
         if(type == DIRECTORY) list_append(list, list_directory_recursive(full_path));
     }
     closedir(dir);

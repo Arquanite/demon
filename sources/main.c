@@ -39,7 +39,7 @@
 #include "bool.h"
 #include "config.h"
 #include "parse.h"
-#include "dir.h"
+#include "file.h"
 #include "sync.h"
 #include "filelist.h"
 
@@ -105,13 +105,13 @@ int main(int argc, char *argv[]){
     // Przykład użycia listy
 
     file_list *list = list_create();
-    list_add(list, "ddd", "ffff", true);
-    list_add(list, "121", "123", true);
-    list_add(list, "1234", "1233", true);
+    list_add(list, "ddd", "ffff", REGULAR_FILE, true);
+    list_add(list, "121", "123", REGULAR_FILE, true);
+    list_add(list, "1234", "1233", REGULAR_FILE, true);
 
     file_list *bb = list_create();
-    list_add(bb, "121bbbb", "1bbb23", true);
-    list_add(bb, "bbbb1234", "123bbb3", true);
+    list_add(bb, "121bbbb", "1bbb23", REGULAR_FILE, true);
+    list_add(bb, "bbbb1234", "123bbb3", REGULAR_FILE, true);
 
     list_append(list, bb);
 

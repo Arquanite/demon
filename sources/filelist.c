@@ -9,7 +9,7 @@ file_list *list_create(){
     return list;
 }
 
-file_list *list_add(file_list *list, char *name, char *path, bool mmap){
+file_list *list_add(file_list *list, char *name, char *path, FILE_TYPE type, bool mmap){
     while(list->next != NULL) list = list->next;
     list->next = malloc(sizeof(file_list));
     list = list->next;
@@ -19,6 +19,7 @@ file_list *list_add(file_list *list, char *name, char *path, bool mmap){
     strcpy(list->path, path);
     list->mmap = mmap;
     list->next = NULL;
+    list->type = type;
     return list;
 }
 

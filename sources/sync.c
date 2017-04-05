@@ -1,5 +1,5 @@
 #include "sync.h"
-#include "dir.h"
+#include "file.h"
 
 #include <fcntl.h>
 #include <sys/types.h>
@@ -73,7 +73,7 @@ void sync_all(char *source_path, char *dest_path){
         list = list->next;
         int len = strlen(list->path) + strlen(list->name) - strlen(source_path) + strlen(dest_path) + 2;
         char tmp[len];
-        snprintf(tmp, len, "%s%s/%s", dest_path, list->path + strlen(source_path), list->name);
-        printf("dupa %s\n", tmp);
+        snprintf(tmp, len, "%s%s/%s : %d", dest_path, list->path + strlen(source_path), list->name, list->type);
+        printf("dupa %s : %d\n", tmp, list->type);
     }
 }
