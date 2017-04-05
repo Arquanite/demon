@@ -41,29 +41,22 @@ bool is_directory(const char *name){
 }
 
 file_list *list_directory(const char *path){
-    file_list *lista = list_create();
+    file_list *list = list_create();
     DIR *dir;
     struct dirent *entry;
-    char entry_path[PATH_MAX + 1];
-    size_t path_len;
-    strncpy(entry_path, path, sizeof(entry_path));
-    path_len = strlen(path);
-    if(entry_path[path_len - 1] != '/'){
-        entry_path[path_len] = '/';
-        entry_path[path_len + 1] = '\0';
-        ++path_len;
-    }
     dir = opendir(path);
     while((entry = readdir(dir)) != NULL){
-        if(strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name,"..") == 0) continue;
+        if(strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) continue;
+        int len = strlen(path);
+        len += strlen(entry->d_name) + 2;
+        char full_path[len];
+        snprintf(full_path, len, "%s/%s", path, entry->d_name);
         FILE_TYPE type;
-        strncpy(entry_path + path_len, entry->d_name, sizeof(entry_path) - path_len);
-        type = get_file_type(entry_path);
-        list_add(lista, entry->d_name, path, true);
-    //    printf("%-18s: %s\n", type, entry_path);
+        type = get_file_type(full_path);
+        if(type != DIRECTORY) list_add(list, entry->d_name, path, true);
     }
     closedir(dir);
-    return lista;
+    return list;
 }
 
 file_list *list_directory_recursive(char *path){
