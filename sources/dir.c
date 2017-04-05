@@ -40,7 +40,7 @@ bool is_directory(const char *name){
     return false;
 }
 
-file_list *list_directory(const char *path){
+file_list *list_directory(char *path){
     file_list *lista = list_create();
     DIR *dir;
     struct dirent *entry;

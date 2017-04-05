@@ -66,35 +66,14 @@ void read_file(char* path1, char* path2){
     close(fd2);
 }
 
-file_list* read_directory(char *path){
-    struct dirent *ent;
-    if (check_directory(path)){
-        DIR *dir = opendir(path);
-        while ((ent = readdir (dir)) != NULL){
-            if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name,"..") == 0) continue;
-            int len = strlen(path);
-            len += strlen(ent->d_name)+10;
-            char tmp[len];
-            snprintf(tmp, len,"%s/%s", path, ent->d_name);
-            printf ("%s\n", tmp);
-        }
-        closedir(dir);
-    }
-}
-
-void read_directory_recursive(char *path){
-    struct dirent *ent;
-    if (check_directory(path)){
-        DIR *dir = opendir(path);
-        while ((ent = readdir (dir)) != NULL){
-            if (strcmp(ent->d_name, ".") == 0 || strcmp(ent->d_name,"..") == 0) continue;
-            int len = strlen(path);
-            len += strlen(ent->d_name)+10;
-            char tmp[len];
-            snprintf(tmp, len,"%s/%s", path, ent->d_name);
-            printf ("%s\n", tmp);
-            if(check_directory(tmp)) read_directory_recursive(tmp);
-        }
-        closedir(dir);
+void sync_all(char *source_path, char *dest_path){
+    file_list *list = list_directory_recursive(source_path);
+    file_list *begin = list;
+    while(list->next != NULL){
+        list = list->next;
+        int len = strlen(list->path) + strlen(list->name) - strlen(source_path) + strlen(dest_path) + 2;
+        char tmp[len];
+        snprintf(tmp, len, "%s%s/%s", dest_path, list->path + strlen(source_path), list->name);
+        printf("dupa %s\n", tmp);
     }
 }

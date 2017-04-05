@@ -132,6 +132,13 @@ int main(int argc, char *argv[]){
     }
     list_remove_all(begin);
 
+    char *tmp = "/home/dzieszk/tmp/tapetga.jpg";
+    char *tmp2 = "/home/dzieszk/tmp";
+    char *tmp3 = "/share/newtmp";
+    printf("%s%s\n",tmp3, tmp+strlen(tmp2));
+
+    sync_all(c.source_dir, c.dest_dir);
+
     printf("Odsyłam demona do sali 106...\n"); return 0; //pilnuje demona żeby nie uciek :u
 
  /*   openlog("demon_log", LOG_PID | LOG_CONS, LOG_USER);

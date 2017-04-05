@@ -13,10 +13,7 @@ ssize_t write_all (int fd, const void* buffer, size_t count);
 /* Kopiuje zawartość jednego pliku i tworzy identyczną kopię */
 void read_file(char* path1, char* path2);
 
-/* Wypisuje zawartość katalogu */
-file_list *read_directory(char *path);
 
-/* Wypisuje rekursywnie zawartość katalogu i wszystkich jego podkatalogów */
-void read_directory_recursive(char *path);
+void sync_all(char *source_path, char *dest_path);
 
 #endif

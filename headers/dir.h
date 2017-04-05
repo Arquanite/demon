@@ -30,7 +30,7 @@ bool check_directory(const char *name);
 bool is_directory(const char *name);
 
 /* Zwraca zawartość katalogu podanego jako parametr. */
-file_list *list_directory(const char *path);
+file_list *list_directory(char *path);
 
 /* Zwraca zawartość katalogu podanego jako parametr
  * oraz jego wszystkich podkatalogów. */
