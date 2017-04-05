@@ -48,19 +48,15 @@ void read_file(char* path1, char* path2){
     create_file (path2);
     int fd2 = open (path2, O_WRONLY);
     //read part by part until reads less than it should
-    do{
-        bytes_read = read (fd, buffer, sizeof (buffer));
+    do {
+        bytes_read = read(fd, buffer, sizeof(buffer));
         //print offset follwed by bytes
-        printf ("0x%zx :", offset);
-        write_all (fd2, buffer, 16);
-        for (i=0; i<bytes_read; ++i){
-            printf ("%02x ", buffer[i]);
-            //write_all (fd2, buffer[i], 16);
-        }
-        printf ("\n");
+//        printf ("0x%zx :", offset);
+        write_all(fd2, buffer, bytes_read);
+//        printf ("\n");
         //keep count of position in file
         offset += bytes_read;
-    } while (bytes_read == sizeof (buffer));
+    } while(bytes_read == sizeof(buffer));
     //done, close file descriptor
     close(fd);
     close(fd2);
@@ -74,6 +70,14 @@ void sync_all(char *source_path, char *dest_path){
         int len = strlen(list->path) + strlen(list->name) - strlen(source_path) + strlen(dest_path) + 2;
         char tmp[len];
         snprintf(tmp, len, "%s%s/%s", dest_path, list->path + strlen(source_path), list->name);
+        if(list->type == DIRECTORY) mkdir(tmp, 0700);
+        else{
+            len = strlen(list->path);
+            len += strlen(list->name) + 2;
+            char full_path[len];
+            snprintf(full_path, len, "%s/%s", list->path, list->name);
+            read_file(full_path, tmp);
+        }
         printf("dupa %s : %d\n", tmp, list->type);
     }
 }
