@@ -117,6 +117,7 @@ config parse_args(int argc, char *argv[]){
             }
         }
         else {
+            if(arg[strlen(arg)-1] == '/') arg[strlen(arg)-1] = '\0';
             if(dir_count == 0) c.source_dir = arg;
             else if(dir_count == 1) c.dest_dir = arg;
             dir_count++;
