@@ -40,35 +40,7 @@ bool is_directory(const char *name){
     return false;
 }
 
-file_list *list_directory(char *path){
-    file_list *list = list_create();
-    DIR *dir;
-    struct dirent *entry;
-    char entry_path[PATH_MAX + 1];
-    size_t path_len;
-    strncpy(entry_path, path, sizeof(entry_path));
-    path_len = strlen(path);
-    if(entry_path[path_len - 1] != '/'){
-        entry_path[path_len] = '/';
-        entry_path[path_len + 1] = '\0';
-        ++path_len;
-    }
-    dir = opendir(path);
-    while((entry = readdir(dir)) != NULL){
-        if(strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) continue;
-        int len = strlen(path);
-        len += strlen(entry->d_name) + 2;
-        char full_path[len];
-        snprintf(full_path, len, "%s/%s", path, entry->d_name);
-        FILE_TYPE type;
-        type = get_file_type(full_path);
-        if(type == REGULAR_FILE) list_add(list, entry->d_name, path, type, true);
-    }
-    closedir(dir);
-    return list;
-}
-
-file_list *list_directory_recursive(char *path){
+file_list* read_directory(char *path, bool recursive){
     file_list *list = list_create();
     DIR *dir;
     struct dirent *entry;
@@ -79,16 +51,12 @@ file_list *list_directory_recursive(char *path){
         len += strlen(entry->d_name) + 2;
         char full_path[len];
         snprintf(full_path, len, "%s/%s", path, entry->d_name);
-        //char name = malloc(sizeof(char)*strlen(entry->d_name)+1);
-        //snprintf(name, strlen(entry->d_name)+1, "%s", entry->d_name);
         FILE_TYPE type;
         type = get_file_type(full_path);
-        //printf("%s/%s\n", path, entry->d_name);
-
         if(type == REGULAR_FILE) list_add(list, entry->d_name, path, type, true);
-        if(type == DIRECTORY){
+        if(type == DIRECTORY && recursive){
             list_add(list, entry->d_name, path, type, true);
-            list_append(list, list_directory_recursive(full_path));
+            list_append(list, read_directory(full_path, true));
         }
     }
     closedir(dir);

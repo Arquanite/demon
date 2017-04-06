@@ -19,11 +19,8 @@ bool check_directory(const char *name);
  * Nie wyświetla żadnych komunikatów. */
 bool is_directory(const char *name);
 
-/* Zwraca zawartość katalogu podanego jako parametr. */
-file_list *list_directory(char *path);
-
 /* Zwraca zawartość katalogu podanego jako parametr
  * oraz jego wszystkich podkatalogów. */
-file_list *list_directory_recursive(char *path);
+file_list* read_directory(char *path, bool recursive);
 
 #endif
