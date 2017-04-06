@@ -76,7 +76,7 @@ void sync_all(char *source_path, char *dest_path){
         char full_path[len];
         snprintf(full_path, len, "%s/%s", list->path, list->name);
 
-        if(access(full_dest_path, F_OK) != -1){
+        if(exists(full_dest_path)){
             if(list->type == DIRECTORY){
                 if(!compare_timestamp(full_path, full_dest_path)){
                     clone_timestamp(full_path, full_dest_path);
