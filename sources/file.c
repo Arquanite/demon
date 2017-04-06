@@ -4,10 +4,11 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <assert.h>
+#include <unistd.h>
 
 FILE_TYPE get_file_type(const char* path){
     struct stat st;
-    lstat(path, &st);
+    stat(path, &st);
     if(S_ISLNK(st.st_mode)) return SYMBOLIC_LINK;
     else if(S_ISDIR(st.st_mode)) return DIRECTORY;
     else if(S_ISCHR(st.st_mode)) return CHARACTER_DEVICE;
@@ -38,6 +39,11 @@ bool is_directory(const char *name){
         return true;
     }
     return false;
+}
+
+bool exists(const char *name){
+    if(access(name, F_OK) == 0) return true;
+    else return false;
 }
 
 file_list* read_directory(char *path, bool recursive){
