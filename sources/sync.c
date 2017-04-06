@@ -69,21 +69,51 @@ void sync_all(char *source_path, char *dest_path){
     while(list->next != NULL){
         list = list->next;
         int len = strlen(list->path) + strlen(list->name) - strlen(source_path) + strlen(dest_path) + 2;
-        char tmp[len];
-        snprintf(tmp, len, "%s%s/%s", dest_path, list->path + strlen(source_path), list->name);
-        if(access(tmp, F_OK) == -1){
-             if(list->type == DIRECTORY){
-                 mkdir(tmp, 0700);
-             }
-             else{
-                len = strlen(list->path);
-                len += strlen(list->name) + 2;
-                char full_path[len];
-                snprintf(full_path, len, "%s/%s", list->path, list->name);
-                read_file(full_path, tmp);
+        char full_dest_path[len];
+        snprintf(full_dest_path, len, "%s%s/%s", dest_path, list->path + strlen(source_path), list->name);
+        len = strlen(list->path);
+        len += strlen(list->name) + 2;
+        char full_path[len];
+        snprintf(full_path, len, "%s/%s", list->path, list->name);
+
+        if(access(full_dest_path, F_OK) != -1){
+            if(list->type == DIRECTORY){
+                if(!compare_timestamp(full_path, full_dest_path)){
+                    clone_timestamp(full_path, full_dest_path);
+                }
             }
-            printf("dupa %s : %d\n", tmp, list->type);
+            else if(list->type == REGULAR_FILE){
+                if(!compare_timestamp(full_path, full_dest_path)){
+                    remove(full_dest_path);
+                    read_file(full_path, full_dest_path);
+                    clone_timestamp(full_path, full_dest_path);
+                }
+            }
         }
+        else{
+            if(list->type == DIRECTORY){
+                mkdir(full_dest_path, 0700);
+                clone_timestamp(full_path, full_dest_path);
+            }
+            else{
+                read_file(full_path, full_dest_path);
+                clone_timestamp(full_path, full_dest_path);
+            }
+        }
+//        if(access(full_dest_path, F_OK) == -1){
+//            if(compare_timestamp(full_path, full_dest_path)){
+//                if(list->type == DIRECTORY){
+//                    mkdir(full_dest_path, 0700);
+//                    clone_timestamp(full_path, full_dest_path);
+//                }
+//                else{
+//                   read_file(full_path, full_dest_path);
+//                   clone_timestamp(full_path, full_dest_path);
+//               }
+//               printf("dupa %s : %d\n", full_dest_path, list->type);
+//            }
+//        }
+
     }
     list_remove_all(begin);
 }
