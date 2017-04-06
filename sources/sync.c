@@ -1,5 +1,6 @@
 #include "sync.h"
 #include "file.h"
+#include "timestamp.h"
 
 #include <fcntl.h>
 #include <sys/types.h>
@@ -71,7 +72,9 @@ void sync_all(char *source_path, char *dest_path){
         char tmp[len];
         snprintf(tmp, len, "%s%s/%s", dest_path, list->path + strlen(source_path), list->name);
         if(access(tmp, F_OK) == -1){
-             if(list->type == DIRECTORY) mkdir(tmp, 0700);
+             if(list->type == DIRECTORY){
+                 mkdir(tmp, 0700);
+             }
              else{
                 len = strlen(list->path);
                 len += strlen(list->name) + 2;
