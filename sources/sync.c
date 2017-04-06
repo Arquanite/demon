@@ -64,7 +64,8 @@ void read_file(char* path1, char* path2){
 
 void sync_all(char *source_path, char *dest_path){
     file_list *list = read_directory(source_path, true);
-    file_list *begin = list; // MOŻE BYŚ USUNĄŁ TĄ LISTE, OSZCZĘDZAJ RAM GDZIEKOLWIEK JESTEŚ!!1!!111
+    file_list *begin = list;
+#error MOŻE BYŚ USUNĄŁ TĄ LISTE, OSZCZĘDZAJ RAM GDZIEKOLWIEK JESTEŚ!!1!!111
     while(list->next != NULL){
         list = list->next;
         int len = strlen(list->path) + strlen(list->name) - strlen(source_path) + strlen(dest_path) + 2;
