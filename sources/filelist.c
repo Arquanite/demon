@@ -35,10 +35,11 @@ void list_remove_all(file_list *first){
     free(first);
 }
 
-void list_append(file_list *first, file_list *next){
+file_list *list_append(file_list *first, file_list *next){
     while(first->next != NULL) first = first->next;
     first->next = next->next;
     free(next->path);
     free(next->name);
     free(next);
+    return first;
 }
