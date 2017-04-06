@@ -76,39 +76,26 @@ int main(int argc, char *argv[]){
     // Przykład użycia listy
 
     file_list *list = list_create();
-    list_add(list, "ddd", "ffff", REGULAR_FILE, true);
-    list_add(list, "121", "123", REGULAR_FILE, true);
-    list_add(list, "1234", "1233", REGULAR_FILE, true);
+    list_add(list, "11", "ffff", REGULAR_FILE, true);
+    list_add(list, "22", "123", REGULAR_FILE, true);
+    list_add(list, "33", "1233", REGULAR_FILE, true);
 
     file_list *bb = list_create();
-    list_add(bb, "121bbbb", "1bbb23", REGULAR_FILE, true);
-    list_add(bb, "bbbb1234", "123bbb3", REGULAR_FILE, true);
+    list_add(bb, "44", "1bbb23", REGULAR_FILE, true);
+    list_add(bb, "55", "123bbb3", REGULAR_FILE, true);
 
     list_append(list, bb);
 
     file_list *begin = list;
+    list = list_reverse(list);
+    file_list *begin2 = list;
     while(list->next != NULL){
         list = list->next;
         printf("%s\n", list->name);
     }
 
+    list_remove_all(begin2);
     list_remove_all(begin);
-
-    // End of przykład
-    list = read_directory(c.source_dir, true);
-    begin = list;
-    while(list->next != NULL){
-        list = list->next;
-        printf("%s/%s\n", list->path, list->name);
-    }
-    list_remove_all(begin);
-
-    char *tmp = "/home/dzieszk/tmp/tapetga.jpg";
-    char *tmp2 = "/home/dzieszk/tmp";
-    char *tmp3 = "/share/newtmp";
-    printf("%s%s\n",tmp3, tmp+strlen(tmp2));
-
-    sync_all(c.source_dir, c.dest_dir);
 
     printf("Odsyłam demona do sali 106...\n"); return 0; //pilnuje demona żeby nie uciek :u
 

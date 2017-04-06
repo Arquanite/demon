@@ -25,6 +25,8 @@ file_list *list_add(file_list *list, char *name, char *path, FILE_TYPE type, boo
 /* Dodaje na koniec listy pierwszej liste drugą */
 file_list *list_append(file_list *first, file_list *next);
 
+file_list *list_reverse(file_list *list);
+
 /* Usuwa wszystkie elementy listy */
 void list_remove_all(file_list *first);
 

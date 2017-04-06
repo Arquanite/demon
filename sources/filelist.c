@@ -43,3 +43,25 @@ file_list *list_append(file_list *first, file_list *next){
     free(next);
     return first;
 }
+
+file_list *list_reverse(file_list *list){
+    file_list *first = NULL, *next = NULL;
+    while(list->next != NULL){
+        list = list->next;
+        next = first;
+        first = malloc(sizeof(file_list));
+        first->next = next;
+        first->name = malloc(strlen(list->name)+1);
+        strcpy(first->name, list->name);
+        first->path = malloc(strlen(list->path)+1);
+        strcpy(first->path, list->path);
+        first->mmap = list->mmap;
+        first->type = list->type;
+    }
+    next = first;
+    first = malloc(sizeof(file_list));
+    first->next = next;
+    first->name = NULL;
+    first->path = NULL;
+    return first;
+}
