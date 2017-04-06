@@ -65,20 +65,22 @@ void read_file(char* path1, char* path2){
 void sync_all(char *source_path, char *dest_path){
     file_list *list = read_directory(source_path, true);
     file_list *begin = list;
-#error MOŻE BYŚ USUNĄŁ TĄ LISTE, OSZCZĘDZAJ RAM GDZIEKOLWIEK JESTEŚ!!1!!111
     while(list->next != NULL){
         list = list->next;
         int len = strlen(list->path) + strlen(list->name) - strlen(source_path) + strlen(dest_path) + 2;
         char tmp[len];
         snprintf(tmp, len, "%s%s/%s", dest_path, list->path + strlen(source_path), list->name);
-        if(list->type == DIRECTORY) mkdir(tmp, 0700);
-        else{
-            len = strlen(list->path);
-            len += strlen(list->name) + 2;
-            char full_path[len];
-            snprintf(full_path, len, "%s/%s", list->path, list->name);
-            read_file(full_path, tmp);
+        if(access(tmp, F_OK) == -1){
+             if(list->type == DIRECTORY) mkdir(tmp, 0700);
+             else{
+                len = strlen(list->path);
+                len += strlen(list->name) + 2;
+                char full_path[len];
+                snprintf(full_path, len, "%s/%s", list->path, list->name);
+                read_file(full_path, tmp);
+            }
+            printf("dupa %s : %d\n", tmp, list->type);
         }
-        printf("dupa %s : %d\n", tmp, list->type);
     }
+    list_remove_all(begin);
 }
