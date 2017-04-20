@@ -63,8 +63,9 @@ void read_file(char* path1, char* path2){
     close(fd2);
 }
 
-void sync_all(char *source_path, char *dest_path){
-    file_list *list = read_directory(source_path, true);
+void sync_all(char *source_path, char *dest_path, bool recursive){
+    remove_files(source_path, dest_path);
+    file_list *list = read_directory(source_path, recursive);
     file_list *begin = list;
     while(list->next != NULL){
         list = list->next;
@@ -128,8 +129,17 @@ void remove_files(char *source_path, char *dest_path){
         int len = strlen(reversed->path) + strlen(reversed->name) - strlen(dest_path) + strlen(source_path) + 2;
         char source_file[len];
         snprintf(source_file, len, "%s%s/%s", source_path, reversed->path + strlen(dest_path), reversed->name);
+        len = strlen(reversed->path) + strlen(reversed->name) + 3;
+        char file_to_remove[len];
+        snprintf(file_to_remove, len, "%s/%s", reversed->path, reversed->name);
         if(!exists(source_file)){
-            printf("Usuwam: %s/%s\n", reversed->path, reversed->name);
+           // printf("Usuwam: %s\n", file_to_remove);   TODO sysloga
+            if(reversed->type == DIRECTORY){
+                rmdir(file_to_remove);
+            }
+            else {
+                remove(file_to_remove);
+            }
         }
     }
     list_remove_all(begin);

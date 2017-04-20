@@ -97,7 +97,7 @@ int main(int argc, char *argv[]){
     list_remove_all(begin2);
     list_remove_all(begin);
 
-    remove_files(c.source_dir, c.dest_dir);
+    sync_all(c.source_dir, c.dest_dir, false);
 
     printf("Odsyłam demona do sali 106...\n"); return 0; //pilnuje demona żeby nie uciek :u
 

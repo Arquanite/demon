@@ -16,6 +16,6 @@ void read_file(char* path1, char* path2);
 void remove_files(char *source_path, char *dest_path);
 
 /*Zbiera wszystkie funkcje do kupy*/
-void sync_all(char *source_path, char *dest_path);
+void sync_all(char *source_path, char *dest_path, bool recursive);
 
 #endif
