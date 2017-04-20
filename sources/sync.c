@@ -117,3 +117,20 @@ void sync_all(char *source_path, char *dest_path){
     }
     list_remove_all(begin);
 }
+
+void remove_files(char *source_path, char *dest_path){
+    file_list *list = read_directory(dest_path, true);
+    file_list *reversed = list_reverse(list);
+    file_list *begin = reversed;
+    list_remove_all(list);
+    while(reversed->next != NULL){
+        reversed = reversed->next;
+        int len = strlen(reversed->path) + strlen(reversed->name) - strlen(dest_path) + strlen(source_path) + 2;
+        char source_file[len];
+        snprintf(source_file, len, "%s%s/%s", source_path, reversed->path + strlen(dest_path), reversed->name);
+        if(!exists(source_file)){
+            printf("Usuwam: %s/%s\n", reversed->path, reversed->name);
+        }
+    }
+    list_remove_all(begin);
+}
