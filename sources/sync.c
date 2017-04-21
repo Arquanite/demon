@@ -2,14 +2,15 @@
 #include "file.h"
 #include "timestamp.h"
 
-#include <fcntl.h>
+#include <fcntl.h> //open, read
+#include <sys/mman.h> //mmap
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
+#include <unistd.h> //close
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
-#include <dirent.h>
+#include <dirent.h> //directory
 
 void create_file(char* path){
     mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH; // file permissions
@@ -62,6 +63,59 @@ void read_file(char* path1, char* path2){
     close(fd);
     close(fd2);
 }
+
+void remove_files(char *source_path, char *dest_path){
+    file_list *list = read_directory(dest_path, true);
+    file_list *reversed = list_reverse(list);
+    file_list *begin = reversed;
+    list_remove_all(list);
+    while(reversed->next != NULL){
+        reversed = reversed->next;
+        int len = strlen(reversed->path) + strlen(reversed->name) - strlen(dest_path) + strlen(source_path) + 2;
+        char source_file[len];
+        snprintf(source_file, len, "%s%s/%s", source_path, reversed->path + strlen(dest_path), reversed->name);
+        len = strlen(reversed->path) + strlen(reversed->name) + 3;
+        char file_to_remove[len];
+        snprintf(file_to_remove, len, "%s/%s", reversed->path, reversed->name);
+        if(!exists(source_file)){
+           // printf("Usuwam: %s\n", file_to_remove);   TODO sysloga
+            if(reversed->type == DIRECTORY){
+                rmdir(file_to_remove);
+            }
+            else {
+                remove(file_to_remove);
+            }
+        }
+    }
+    list_remove_all(begin);
+}
+
+void copy_map(char *source_path, char *dest_path){
+    /* Deklaracje zmiennych */
+    int sfd, dfd;
+    char *src, *dest;
+    struct stat s;
+    size_t filesize;
+
+    /* Plik źródłowy */
+    sfd = open(source_path, O_RDONLY);
+    filesize = lseek(sfd, 0, SEEK_END);
+    src = mmap(NULL, filesize, PROT_READ, MAP_PRIVATE, sfd, 0);
+
+    /* Plik docelowy */
+    dfd = open(dest_path, O_RDWR | O_CREAT, 0666);
+    ftruncate(dfd, filesize);
+    dest = mmap(NULL, filesize, PROT_READ | PROT_WRITE, MAP_SHARED, dfd, 0);
+
+    /* Kopiowanie */
+    memcpy(dest, src, filesize);
+    munmap(src, filesize);
+    munmap(dest, filesize);
+
+    close(sfd);
+    close(dfd);
+}
+
 
 void sync_all(char *source_path, char *dest_path, bool recursive){
     remove_files(source_path, dest_path);
@@ -119,28 +173,3 @@ void sync_all(char *source_path, char *dest_path, bool recursive){
     list_remove_all(begin);
 }
 
-void remove_files(char *source_path, char *dest_path){
-    file_list *list = read_directory(dest_path, true);
-    file_list *reversed = list_reverse(list);
-    file_list *begin = reversed;
-    list_remove_all(list);
-    while(reversed->next != NULL){
-        reversed = reversed->next;
-        int len = strlen(reversed->path) + strlen(reversed->name) - strlen(dest_path) + strlen(source_path) + 2;
-        char source_file[len];
-        snprintf(source_file, len, "%s%s/%s", source_path, reversed->path + strlen(dest_path), reversed->name);
-        len = strlen(reversed->path) + strlen(reversed->name) + 3;
-        char file_to_remove[len];
-        snprintf(file_to_remove, len, "%s/%s", reversed->path, reversed->name);
-        if(!exists(source_file)){
-           // printf("Usuwam: %s\n", file_to_remove);   TODO sysloga
-            if(reversed->type == DIRECTORY){
-                rmdir(file_to_remove);
-            }
-            else {
-                remove(file_to_remove);
-            }
-        }
-    }
-    list_remove_all(begin);
-}
