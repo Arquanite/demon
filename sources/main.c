@@ -73,31 +73,7 @@ int main(int argc, char *argv[]){
         return EXIT_FAILURE;
     }
 
-    // Przykład użycia listy
-
-    file_list *list = list_create();
-    list_add(list, "11", "ffff", REGULAR_FILE, true);
-    list_add(list, "22", "123", REGULAR_FILE, true);
-    list_add(list, "33", "1233", REGULAR_FILE, true);
-
-    file_list *bb = list_create();
-    list_add(bb, "44", "1bbb23", REGULAR_FILE, true);
-    list_add(bb, "55", "123bbb3", REGULAR_FILE, true);
-
-    list_append(list, bb);
-
-    file_list *begin = list;
-    list = list_reverse(list);
-    file_list *begin2 = list;
-    while(list->next != NULL){
-        list = list->next;
-        printf("%s\n", list->name);
-    }
-
-    list_remove_all(begin2);
-    list_remove_all(begin);
-
-    sync_all(c.source_dir, c.dest_dir, false);
+    sync_all(c);
 
     printf("Odsyłam demona do sali 106...\n"); return 0; //pilnuje demona żeby nie uciek :u
 

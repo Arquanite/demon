@@ -1,10 +1,13 @@
 #include "file.h"
-#include <dirent.h>
+
+#include <dirent.h> //katalogi
 #include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <assert.h>
-#include <unistd.h>
+#include <unistd.h> //close
+#include <fcntl.h> //open, read
+#include <sys/mman.h> //mmap
 
 FILE_TYPE get_file_type(const char* path){
     struct stat st;
@@ -22,7 +25,6 @@ FILE_TYPE get_file_type(const char* path){
 bool check_directory(const char *name){
     DIR* dir = opendir(name);
     if(dir){
-        printf("Katalog %s istnieje i ma się dobrze\n", name);
         closedir(dir);
         return true;
     }
@@ -67,4 +69,127 @@ file_list* read_directory(char *path, bool recursive){
     }
     closedir(dir);
     return list;
+}
+
+void create_file(char* path){
+    mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH; // file permissions
+    int fd = open (path, O_WRONLY | O_EXCL | O_CREAT, mode); // tworzenie pliku
+    if (fd == -1) {
+        printf("An error has occurred");
+                perror("open");
+        exit(EXIT_FAILURE);
+    }
+    close(fd);
+}
+
+void copy_file_rw(char* source_path, char* dest_path){
+    unsigned char buffer[16];
+    size_t offset = 0;
+    size_t bytes_read;
+    int i;
+
+    /* Otwieranie pliku źródłowego */
+    int sfd = open (source_path, O_RDONLY);
+
+    /* Tworzenie pliku docelowego */
+    create_file (dest_path);
+    int dfd = open (dest_path, O_WRONLY);
+    /* Czytanie częściami do momentu gdy część
+     * jest mniejsza niż powinna */
+    do {
+        bytes_read = read(sfd, buffer, sizeof(buffer));
+        write_all(dfd, buffer, bytes_read);
+
+        /* Pilnowanie pozycji w pliku */
+        offset += bytes_read;
+    } while(bytes_read == sizeof(buffer));
+    /* Zamykanie file descriptor */
+    close(sfd);
+    close(dfd);
+}
+
+void copy_file_mmap(char *source_path, char *dest_path){
+    /* Deklaracje zmiennych */
+    int sfd, dfd;
+    char *src, *dest;
+    struct stat s;
+    size_t filesize;
+
+    /* Plik źródłowy */
+    sfd = open(source_path, O_RDONLY);
+    filesize = lseek(sfd, 0, SEEK_END);
+    src = mmap(NULL, filesize, PROT_READ, MAP_PRIVATE, sfd, 0);
+
+    /* Plik docelowy */
+    dfd = open(dest_path, O_RDWR | O_CREAT, 0666);
+    ftruncate(dfd, filesize);
+    dest = mmap(NULL, filesize, PROT_READ | PROT_WRITE, MAP_SHARED, dfd, 0);
+
+    /* Kopiowanie */
+    memcpy(dest, src, filesize);
+    munmap(src, filesize);
+    munmap(dest, filesize);
+
+    close(sfd);
+    close(dfd);
+}
+
+void copy_file(char *source_path, char *dest_path, bool mmap_on){
+    if(mmap_on) copy_file_mmap(source_path, dest_path);
+    else copy_file_rw(source_path, dest_path);
+}
+
+ssize_t write_all (int fd, const void* buffer, size_t count) {
+    size_t left_to_write = count;
+    while (left_to_write > 0) {
+        size_t written = write (fd, buffer, count);
+        if (written == -1)
+            /* Błąd */
+            return -1;
+        else
+            /* Pilnowanie ile jescze zostało do zapisu  */
+            left_to_write -= written;
+    }
+    /* Pilnowanie żeby nie zapisać za dużo   */
+    assert (left_to_write == 0);
+    /* Liczba zapisanych bajtów to count  */
+    return count;
+}
+
+void remove_files(config c){
+    /* Tworzenie i odwrócenie listy z plikami
+     * katalogu docelowego oraz tworzenie punktu
+     * powrotu (begin) */
+    file_list *list = read_directory(c.dest_dir, c.recursive_sync);
+    file_list *reversed = list_reverse(list);
+    file_list *begin = reversed;
+    list_remove_all(list);
+
+    while(reversed->next != NULL){
+        reversed = reversed->next;
+
+        /* Tworzenie pełnej ścieżki pliku z katalogu źródłowego */
+        int len = strlen(reversed->path) + strlen(reversed->name) - strlen(c.dest_dir) + strlen(c.source_dir) + 2;
+        char source_file[len];
+        snprintf(source_file, len, "%s%s/%s", c.source_dir, reversed->path + strlen(c.dest_dir), reversed->name);
+
+        /* Tworzenie pełnej ścieżki pliku z katalogu docelowego */
+        len = strlen(reversed->path) + strlen(reversed->name) + 3;
+        char file_to_remove[len];
+        snprintf(file_to_remove, len, "%s/%s", reversed->path, reversed->name);
+
+        /* Jeżeli plik nie istnieje w katalogu źródłowym
+         * jest on usuwany z katalogu docelowego */
+        if(!exists(source_file)){
+            // printf("Usuwam: %s\n", file_to_remove);   TODO sysloga
+            if(reversed->type == DIRECTORY){
+                rmdir(file_to_remove);
+            }
+            else {
+                remove(file_to_remove);
+            }
+        }
+    }
+    /* Usuwanie listy */
+    list_remove_all(begin);
 }
