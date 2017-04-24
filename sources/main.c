@@ -6,6 +6,8 @@
 #include <dirent.h> // opendir
 #include <unistd.h> // fork
 #include <string.h>
+#include <sys/file.h>
+#include <errno.h>
 
 #include "bool.h"
 #include "config.h"
@@ -44,25 +46,11 @@ void widelec(){
     close(STDOUT_FILENO);
     close(STDERR_FILENO);
 
-    //TU TRZEBA ZROBIĆ INICJALIZACJĘ NASZEGO DEMONA (specyficzna dla naszego)
 }
 
 int main(int argc, char *argv[]){
-    /*if(argc < 3){
-        printf("Jesteś debilem debilu :u\n");
-        return 1;
-    }*/
 
     config c = parse_args(argc, argv);
-
-    // debug info, wyjebuje się kiedy nie podasz folderów, nie jest to problem, bo domyślnie się to nie wyświetla
-    printf("is_valid: %d \n"
-           "sleep_time: %d \n"
-           "recursive_sync: %d \n"
-           "mmap_size_threshold: %zd \n"
-           "source_dir: %s \n"
-           "dest_dir: %s \n"
-           ,c.is_valid, c.sleep_time, c.recursive_sync, c.mmap_size_threshold, c.source_dir, c.dest_dir);
 
     if(!c.is_valid){
         printf("BŁĄÐ: nieprawidłowa składnia\n");
@@ -70,14 +58,32 @@ int main(int argc, char *argv[]){
     }
 
     if(!(check_directory(c.source_dir) && check_directory(c.dest_dir))){
+        printf("Któryś z katalogów nie istnieje. Proszę podać poprawne katalogi.\n");
         return EXIT_FAILURE;
     }
 
+    int pid_file = open("/tmp/demon.pid", O_CREAT | O_RDWR, 0666);
+    int rc = flock(pid_file, LOCK_EX | LOCK_NB);
+    if(rc){
+        if(EWOULDBLOCK == errno){
+            printf("Instancja już istnieje\n");
+            return 0;
+        }
+        else{
+            printf("Uruchomiłeś szatana\n");
+        }
+    }
+
+    FILE *fp = fopen("/tmp/demon2.pid", "w");
+    fprintf(fp, "%d", getpid());
+    close(fp);
+
     sync_all(c);
+    printf("Ukończono synchronizację. Przechodzę w stan uśpienia na %d sekund.\n", c.sleep_time);
 
     printf("Odsyłam demona do sali 106...\n"); return 0; //pilnuje demona żeby nie uciek :u
 
- /*   openlog("demon_log", LOG_PID | LOG_CONS, LOG_USER);
+    openlog("demon_log", LOG_PID | LOG_CONS, LOG_USER);
     syslog(LOG_INFO, "Start programu");
     widelec();
     printf("Wyglada na to, ze dziala\n");
@@ -88,7 +94,7 @@ int main(int argc, char *argv[]){
         syslog(LOG_INFO, "Dalej se biegam");
     }
 
-    closelog(); */
+    closelog();
 
     return 0;
 }
