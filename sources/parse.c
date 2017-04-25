@@ -37,7 +37,7 @@ int parse_time(const char *time){
 }
 
 size_t parse_size(const char *size){
-    size_t bytes = 0;;
+    size_t bytes = 0;
     for(int i=0; i<strlen(size)-1; i++){
         if(size[i] >=48 && size[i] <= 57){ // Sprawdza czy znak jest cyfrą
             bytes *= 10;
