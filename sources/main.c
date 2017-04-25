@@ -62,22 +62,6 @@ int main(int argc, char *argv[]){
         return EXIT_FAILURE;
     }
 
-    int pid_file = open("/tmp/demon.pid", O_CREAT | O_RDWR, 0666);
-    int rc = flock(pid_file, LOCK_EX | LOCK_NB);
-    if(rc){
-        if(EWOULDBLOCK == errno){
-            printf("Instancja już istnieje\n");
-            return 0;
-        }
-        else{
-            printf("Uruchomiłeś szatana\n");
-        }
-    }
-
-    FILE *fp = fopen("/tmp/demon2.pid", "w");
-    fprintf(fp, "%d", getpid());
-    close(fp);
-
     sync_all(c);
     printf("Ukończono synchronizację. Przechodzę w stan uśpienia na %d sekund.\n", c.sleep_time);
 
