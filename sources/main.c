@@ -145,9 +145,6 @@ int main(int argc, char *argv[]){
         return EXIT_FAILURE;
     }
 
-    if(contains(c.source_dir, c.dest_dir)){
-        printf("BŁĄÐ: Katalogi nie mogą się zawierać\n");
-    }
 
     openlog("demon_log", LOG_PID | LOG_CONS, LOG_USER);
     syslog(LOG_INFO, "Start programu");
