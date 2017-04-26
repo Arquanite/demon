@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
-
+#include <syslog.h>
 
 
 void sync_all(config c){
@@ -36,7 +36,7 @@ void sync_all(config c){
         struct stat st;
         stat(full_source_path, &st);
         int size = st.st_size;
-        printf("%d\n", size);
+//        printf("%d\n", size);
         if(size >= c.mmap_size_threshold) mmap_on = true;
 
 
@@ -50,7 +50,9 @@ void sync_all(config c){
             }
             else if(list->type == REGULAR_FILE){
                 if(!compare_timestamp(full_source_path, full_dest_path)){
+                    syslog(LOG_INFO, "Plik nieaktualny, usuwam: %s\n", full_dest_path);
                     remove(full_dest_path);
+                    syslog(LOG_INFO, "Kopiuje plik do: %s\n", full_dest_path);
                     copy_file(full_source_path, full_dest_path, mmap_on);
                     clone_timestamp(full_source_path, full_dest_path);
                 }
@@ -59,10 +61,12 @@ void sync_all(config c){
         /* Kopiowanie pozostałych plików i/lub katalogów */
         else{
             if(list->type == DIRECTORY){
+                syslog(LOG_INFO, "Tworzę katalog: %s\n", full_dest_path);
                 mkdir(full_dest_path, 0700);
                 clone_timestamp(full_source_path, full_dest_path);
             }
             else{
+                syslog(LOG_INFO, "Kopiuje plik do: %s\n", full_dest_path);
                 copy_file(full_source_path, full_dest_path, mmap_on);
                 clone_timestamp(full_source_path, full_dest_path);
             }

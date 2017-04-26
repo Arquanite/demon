@@ -25,12 +25,12 @@ bool TIME_TO_DIE = false;
 
 //funkcja forkująca rodzica
 void widelec(){
-    syslog(LOG_INFO, "Użycie widelca");
+    syslog(LOG_INFO, "Forkowanie procesu");
     //forkowanie rodzica
     pid_t pid, sid;
     pid = fork();
     if(pid < 0){
-        syslog(LOG_ERR, "Error: could not fork parent process");
+        syslog(LOG_ERR, "BŁĄD: nie udało się rozdzielić procesu.");
         exit(EXIT_FAILURE);
     }
     if(pid > 0){
@@ -41,12 +41,12 @@ void widelec(){
     //tworzenie SIDa dla dziecka
     sid = setsid();
     if(sid < 0){
-        syslog(LOG_ERR, "Error: could not create sid for child process");
+        syslog(LOG_ERR, "BŁĄD: nie można utworzyć SID dla procesu potomnego");
         exit(EXIT_FAILURE);
     }
     //zmiana katalogu
     if((chdir("/")) < 0) {
-        syslog(LOG_ERR, "Error: could not change working directory");
+        syslog(LOG_ERR, "BŁĄD: nie można zmienić katalogu bieżącego");
     }
     //zamykanie STD
     close(STDIN_FILENO);
@@ -56,31 +56,36 @@ void widelec(){
 }
 
 int lock(){
-    int lock_file = open("demon.lock", O_CREAT | O_RDWR, 0666);
+    int lock_file = open("/tmp/demon.lock", O_CREAT | O_RDWR, 0666);
     struct flock lockp;
     fcntl(lock_file, F_GETLK, &lockp);
     if(lockp.l_type == 2){
         lockp.l_type = 1;
-        if(fcntl(lock_file, F_SETLKW, &lockp) != -1) return 0; // Udało się zablokować
-        else return -1; // Nie można zablokować
+        if(fcntl(lock_file, F_SETLKW, &lockp) != -1){
+            syslog(LOG_INFO, "Pomyślnie zablokowano plik blokady: /tmp/demon.lock");
+            return 0; // Udało się zablokować
+        }
+        else{
+            return -1; // Nie można zablokować
+        }
     }
     else return lockp.l_pid; // Zwraca pid procesu, który założył blokadę
 }
 
 void sig_force_sync(){
-    if(SYNC_IN_PROGRESS) printf("Wymuszenie w trakcie synchronizacji\n"); //! zmień na syslog
-    else printf("Wymuszona synchronizacja\n"); //! zmień na syslog
-}
-
-void sig_stop(){
-    printf("Bezpieczne zakończenie pracy\n"); //! zmień na syslog
-    if(SYNC_IN_PROGRESS) TIME_TO_DIE = true;
-    else exit(EXIT_SUCCESS);
+    if(SYNC_IN_PROGRESS) syslog(LOG_INFO, "Wymuszenie w trakcie synchronizacji, kontynuuję");
+    else syslog(LOG_INFO, "Wymuszenie synchronizacji, wybudzam");
 }
 
 void sig_kill(){
-    printf("Koniec pracy demona\n"); //! zmień na syslog
+    syslog(LOG_INFO, "Zakończenie pracy demona");
     exit(EXIT_SUCCESS);
+}
+
+void sig_stop(){
+    syslog(LOG_INFO, "Bezpieczne zakończenie pracy, czekam na koniec synchronizacji");
+    if(SYNC_IN_PROGRESS) TIME_TO_DIE = true;
+    else sig_kill();
 }
 
 void podlacz_kable(){
@@ -140,30 +145,19 @@ int main(int argc, char *argv[]){
         return EXIT_FAILURE;
     }
 
-    //sync_all(c);
-    //printf("Ukończono synchronizację. Przechodzę w stan uśpienia na %d sekund.\n", c.sleep_time);
-
-//    printf("Odsyłam demona do sali 106...\n"); return 0; //pilnuje demona żeby nie uciek :u
-
     openlog("demon_log", LOG_PID | LOG_CONS, LOG_USER);
     syslog(LOG_INFO, "Start programu");
-    //widelec();
-    printf("Wyglada na to, ze dziala\n");
+    widelec();
+    lock();
 
     while(true){
-        printf("SYNCHRO\n");
-        fflush(stdout);
+        syslog(LOG_INFO, "Rozpoczynam synchronizację");
         SYNC_IN_PROGRESS = true;
-        for(int i=0; i<10; i++){
-            printf("%d%%\n", (i+1)*10);
-            fflush(stdout);
-            sleep(1);
-        }
-        printf("\nPRZERWA\n");
-        fflush(stdout);
+        sync_all(c);
         SYNC_IN_PROGRESS = false;
         if(TIME_TO_DIE) sig_kill();
-        sleep(5);
+        syslog(LOG_INFO, "Zakończono synchronizację, usypiam na %d sekund", c.sleep_time);
+        sleep(c.sleep_time);
     }
 
     closelog();

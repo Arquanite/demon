@@ -8,6 +8,7 @@
 #include <unistd.h> //close
 #include <fcntl.h> //open, read
 #include <sys/mman.h> //mmap
+#include <syslog.h>
 
 FILE_TYPE get_file_type(const char* path){
     struct stat st;
@@ -181,7 +182,7 @@ void remove_files(config c){
         /* Jeżeli plik nie istnieje w katalogu źródłowym
          * jest on usuwany z katalogu docelowego */
         if(!exists(source_file)){
-            // printf("Usuwam: %s\n", file_to_remove);   TODO sysloga
+            syslog(LOG_INFO, "Usuwam: %s", file_to_remove);
             if(reversed->type == DIRECTORY){
                 rmdir(file_to_remove);
             }
