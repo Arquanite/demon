@@ -84,14 +84,14 @@ config parse_args(int argc, char *argv[]){
         if(arg[0] == '-'){
             char opt = arg[1];
             if(strlen(arg) != 2){
-                printf("BŁĄÐ: nieznana opcja: %s\n", arg);
+                printf("BŁĄD: nieznana opcja: %s\n", arg);
                 return c;
             }
             switch (opt) {
             case 's':
                 c.sleep_time = parse_time(argv[i+1]);
                 if(c.sleep_time == -1){
-                    printf("BŁĄÐ: nieprawidłowy format czasu: %s\n", argv[i+1]);
+                    printf("BŁĄD: nieprawidłowy format czasu: %s\n", argv[i+1]);
                     return c;
                 }
                 i++;
@@ -104,14 +104,14 @@ config parse_args(int argc, char *argv[]){
             case 'm':
                 c.mmap_size_threshold = parse_size(argv[i+1]);
                 if(c.mmap_size_threshold == -1){
-                    printf("BŁĄÐ: nieprawidłowy format rozmiaru: %s\n", argv[i+1]);
+                    printf("BŁĄD: nieprawidłowy format rozmiaru: %s\n", argv[i+1]);
                     return c;
                 }
                 i++;
                 break;
 
             default:
-                printf("BŁĄÐ: nieznana opcja %c\n", opt);
+                printf("BŁĄD: nieznana opcja %c\n", opt);
                 return c;
                 break;
             }

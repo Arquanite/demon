@@ -104,7 +104,7 @@ int main(int argc, char *argv[]){
     }
 
     if(pid == -1){
-        printf("BŁĄÐ: nie można zablokować pliku demon.pid");
+        printf("BŁĄD: nie można zablokować pliku demon.pid");
         return EXIT_FAILURE;
     }
     if(pid != 0){
@@ -135,13 +135,13 @@ int main(int argc, char *argv[]){
     config c = parse_args(argc, argv);
 
     if(!c.is_valid){
-        printf("BŁĄÐ: nieprawidłowa składnia\n");
+        printf("BŁĄD: nieprawidłowa składnia\n");
         help(false);
         return EXIT_FAILURE;
     }
 
     if(!(check_directory(c.source_dir) && check_directory(c.dest_dir))){
-        printf("BŁĄÐ: Któryś z katalogów nie istnieje. Proszę podać poprawne katalogi.\n");
+        printf("BŁĄD: Któryś z katalogów nie istnieje. Proszę podać poprawne katalogi.\n");
         return EXIT_FAILURE;
     }
 
@@ -149,6 +149,10 @@ int main(int argc, char *argv[]){
     c.source_dir = realpath(c.source_dir, bufa);
     c.dest_dir = realpath(c.dest_dir, bufb);
 
+    if(contains(c.source_dir, c.dest_dir)){
+        printf("BŁĄD: katalogi nie mogą się zawierać\n");
+        return EXIT_FAILURE;
+    }
 
     openlog("demon_log", LOG_PID | LOG_CONS, LOG_USER);
     syslog(LOG_INFO, "Start programu");
