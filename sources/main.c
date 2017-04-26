@@ -141,8 +141,12 @@ int main(int argc, char *argv[]){
     }
 
     if(!(check_directory(c.source_dir) && check_directory(c.dest_dir))){
-        printf("Któryś z katalogów nie istnieje. Proszę podać poprawne katalogi.\n");
+        printf("BŁĄÐ: Któryś z katalogów nie istnieje. Proszę podać poprawne katalogi.\n");
         return EXIT_FAILURE;
+    }
+
+    if(contains(c.source_dir, c.dest_dir)){
+        printf("BŁĄÐ: Katalogi nie mogą się zawierać\n");
     }
 
     openlog("demon_log", LOG_PID | LOG_CONS, LOG_USER);

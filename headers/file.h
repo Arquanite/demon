@@ -15,6 +15,9 @@ FILE_TYPE get_file_type(const char* path);
  * w razie błędu wyświetla komunikat na stdout. */
 bool check_directory(const char *name);
 
+/* Sprawdza czy jeden z katalogów zawiera drugi */
+bool contains(const char *dir1, const char *dir2);
+
 /* Sprawdza czy podany katalog rzeczywiście jest katalogiem,
  * czy istnieje oraz czy użytkownik ma prawo otworzyć ten katalog.
  * Nie wyświetla żadnych komunikatów. */

@@ -194,3 +194,11 @@ void remove_files(config c){
     /* Usuwanie listy */
     list_remove_all(begin);
 }
+
+bool contains(const char *dir1, const char *dir2){
+    char *a, *b, bufa[PATH_MAX + 1], bufb[PATH_MAX + 1];
+    a = realpath(dir1, bufa);
+    b = realpath(dir2, bufb);
+    int n = strlen(a) < strlen(b) ? strlen(a) : strlen(b);
+    return strncmp(a, b, n) ? false : true;
+}
