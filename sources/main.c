@@ -30,7 +30,7 @@ void widelec(){
     pid_t pid, sid;
     pid = fork();
     if(pid < 0){
-        syslog(LOG_ERR, "BŁĄD: nie udało się rozdzielić procesu.");
+        syslog(LOG_CRIT, "BŁĄD: nie udało się rozdzielić procesu.");
         exit(EXIT_FAILURE);
     }
     if(pid > 0){
@@ -41,12 +41,12 @@ void widelec(){
     //tworzenie SIDa dla dziecka
     sid = setsid();
     if(sid < 0){
-        syslog(LOG_ERR, "BŁĄD: nie można utworzyć SID dla procesu potomnego");
+        syslog(LOG_CRIT, "BŁĄD: nie można utworzyć SID dla procesu potomnego");
         exit(EXIT_FAILURE);
     }
     //zmiana katalogu
     if((chdir("/")) < 0) {
-        syslog(LOG_ERR, "BŁĄD: nie można zmienić katalogu bieżącego");
+        syslog(LOG_CRIT, "BŁĄD: nie można zmienić katalogu bieżącego");
     }
     //zamykanie STD
     close(STDIN_FILENO);
@@ -152,7 +152,11 @@ int main(int argc, char *argv[]){
     openlog("demon_log", LOG_PID | LOG_CONS, LOG_USER);
     syslog(LOG_INFO, "Start programu");
     widelec();
-    lock();
+
+    if(lock() != 0){
+        syslog(LOG_CRIT, "BŁĄD: Nie można zablokować pliku blokady");
+        sig_kill();
+    }
 
     while(true){
         syslog(LOG_INFO, "Rozpoczynam synchronizację");

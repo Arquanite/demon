@@ -1,22 +1,30 @@
-#Demon synchronizujący dwa podkatalogi (np. A i B)
+# Demon synchronizujący dwa katalogi (na przykład A i B)
+Poprawne użycie programu:
 
-Program który otrzymuje co najmniej dwa argumenty: ścieżkę źródłową, ścieżkę docelowa.
-Jeżeli któraś ze ścieżek nie jest katalogiem program powraca natychmiast z komunikatem błędu.
-W przeciwnym wypadku staje się demonem. Demon wykonuje następujące czynności: śpi przez piec minut 
-(czas spania można zmieniać przy pomocy dodatkowego opcjonalnego argumentu),
-po czym po obudzeniu się porównuje katalog źródłowy z katalogiem docelowym. Pozycje, które nie są zwykłymi
-plikami są ignorowane (np. katalogi i dowiązania symboliczne). Jeżeli demon (a) napotka na nowy plik w katalogu źródłowym,
-i tego pliku brak w katalogu docelowym lub (b) plik w katalogu docelowym ma późniejsza datę ostatniej modyfikacji demon
-wykonuje kopie pliku z katalogu źródłowego do katalogu docelowego - ustawiając w katalogu docelowym datę modyfikacji tak,
-aby przy kolejnym obudzeniu nie trzeba było wykonać kopii (chyba ze plik w katalogu źródłowym zostanie ponownie zmieniony).
-Jeżeli zaś odnajdzie plik w katalogu docelowym, którego nie ma w katalogu źródłowym to usuwa ten plik z katalogu docelowego.
-Możliwe jest również natychmiastowe obudzenie się demona poprzez wysłanie mu sygnału SIGUSR1. Wyczerpująca informacja o każdej
-akcji typu uśpienie/obudzenie się demona (naturalne lub w wyniku sygnału), wykonanie kopii lub usuniecie pliku jest przesłana
-do logu systemowego. Informacja ta powinna zawierać aktualna datę. (14p). Dodatkowo:
+ (1) ```demon <ścieżka źródłowa> <ścieżka docelowa> [opcje]```
+ 
+ (2) ```demon <opcja>```
 
-Opcja -R pozwalająca na rekurencyjną synchronizację katalogów (teraz pozycje będące katalogami nie są ignorowane).
-W szczególności jeżeli demon stwierdzi w katalogu docelowym podkatalog którego brak w katalogu źródłowym powinien usunąć go wraz z zawartością. (10p)
+Jeżeli chcesz uruchomić demona i rozpocząć synchronizację, użyj rozwiązania (1).
+Jeżeli chcesz wymusić synchronizację lub zatrzymać uruchomionego demona, użyj rozwiązania (2).
+Jeżeli chcesz wyświetlić pomoc wpisz ``` demon -h ```
 
-W zależności od rozmiaru plików dla małych plików wykonywane jest kopiowanie przy pomocy read/write a w przypadku
-dużych przy pomocy mmap/write (plik źródłowy) zostaje zamapowany w całości w pamięci. Próg dzielący pliki małe od
-dużych może być przekazywany jako opcjonalny argument. (10p)
+Opis opcji stosowanych w (1) przypadku użycia:
+
+ -R : kopiowanie rekursywne
+
+ ```-s <liczba>[jednostka]``` : czas uśpienia demona, jednostki (domyślnie sekundy):
+ * s : sekundy
+ * m : minuty
+ * h : godziny
+
+ ```-m \<liczba>[jednostka]``` : pliki tego rozmiaru i większe będą kopiowane za pomocą mmap, jednostki (domyślnie bajty):
+ * k : kilobajty 
+ * m : megabajty
+ * g : gigabajty
+
+Opis opcji stosowanych w (2) przypadku użycia:
+
+ * -F : powoduje natychmiastowe wybudzenie demona (synchronizację)
+ * -S : bezpieczne zakończenie pracy demona (kończy synchronizację, jeśli rozpoczęta)
+ * -K : natychmiastowe zakończenie pracy demona.

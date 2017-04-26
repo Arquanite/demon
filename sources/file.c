@@ -76,8 +76,7 @@ void create_file(char* path){
     mode_t mode = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH; // file permissions
     int fd = open (path, O_WRONLY | O_EXCL | O_CREAT, mode); // tworzenie pliku
     if (fd == -1) {
-        printf("An error has occurred");
-                perror("open");
+        syslog(LOG_CRIT, "BŁĄD: nie można utworzyć pliku");
         exit(EXIT_FAILURE);
     }
     close(fd);
@@ -144,9 +143,7 @@ ssize_t write_all (int fd, const void* buffer, size_t count) {
     size_t left_to_write = count;
     while (left_to_write > 0) {
         size_t written = write (fd, buffer, count);
-        if (written == -1)
-            /* Błąd */
-            return -1;
+        if (written == -1) return -1;
         else
             /* Pilnowanie ile jescze zostało do zapisu  */
             left_to_write -= written;
