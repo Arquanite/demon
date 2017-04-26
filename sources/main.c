@@ -55,12 +55,12 @@ void widelec(){
 
 }
 
-int lock(){
+int lock(bool lock){
     int lock_file = open("/tmp/demon.lock", O_CREAT | O_RDWR, 0666);
     struct flock lockp;
     fcntl(lock_file, F_GETLK, &lockp);
     if(lockp.l_type == 2){
-        lockp.l_type = 1;
+        lockp.l_type = lock;
         if(fcntl(lock_file, F_SETLKW, &lockp) != -1){
             syslog(LOG_INFO, "Pomyślnie zablokowano plik blokady: /tmp/demon.lock");
             return 0; // Udało się zablokować
@@ -95,7 +95,7 @@ void podlacz_kable(){
 }
 
 int main(int argc, char *argv[]){
-    int pid = lock();
+    int pid = lock(false);
     podlacz_kable();
 
     if(argc == 2 && argv[1][0] == '-' && argv[1][1] == 'h'){
@@ -145,12 +145,16 @@ int main(int argc, char *argv[]){
         return EXIT_FAILURE;
     }
 
+    char bufa[PATH_MAX + 1], bufb[PATH_MAX + 1];
+    c.source_dir = realpath(c.source_dir, bufa);
+    c.dest_dir = realpath(c.dest_dir, bufb);
+
 
     openlog("demon_log", LOG_PID | LOG_CONS, LOG_USER);
     syslog(LOG_INFO, "Start programu");
     widelec();
 
-    if(lock() != 0){
+    if(lock(true) != 0){
         syslog(LOG_CRIT, "BŁĄD: Nie można zablokować pliku blokady");
         sig_kill();
     }
