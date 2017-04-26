@@ -15,14 +15,14 @@ Opis opcji stosowanych w (1) przypadku użycia:
  -R : kopiowanie rekursywne
 
  -s <liczba>[jednostka] : czas uśpienia demona, jednostki (domyślnie sekundy):
- s : sekundy
- m : minuty
- h : godziny
+  s : sekundy
+  m : minuty
+  h : godziny
 
  -m <liczba>[jednostka] : pliki tego rozmiaru i większe będą kopiowane za pomocą mmap, jednostki (domyślnie bajty):
- k : kilobajty 
- m : megabajty
- g : gigabajty
+  k : kilobajty 
+  m : megabajty
+  g : gigabajty
 
 Opis opcji stosowanych w (2) przypadku użycia:
 
