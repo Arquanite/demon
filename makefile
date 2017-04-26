@@ -7,7 +7,7 @@ clean:
 	rm demon
 	
 install: all
-  cp demon /usr/bin
+	cp demon /usr/bin
 
 uninstall:
-  rm /usr/bin/demon
+	rm /usr/bin/demon
