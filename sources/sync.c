@@ -37,8 +37,10 @@ void sync_all(config c){
         stat(full_source_path, &st);
         int size = st.st_size;
 //        printf("%d\n", size);
-        if(size >= c.mmap_size_threshold) mmap_on = true;
-
+        if(size >= c.mmap_size_threshold) {
+            syslog(LOG_INFO, "Używam mmap");
+            mmap_on = true;
+        }
 
         /* Porównywanie timestamp'ów oraz aktualizacja
          * plików na ich podstawie */

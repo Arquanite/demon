@@ -12,5 +12,5 @@ install: all
 uninstall:
 	rm /usr/bin/demon
 
-test: install
+test:
 	./test.sh
