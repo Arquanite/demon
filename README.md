@@ -37,3 +37,7 @@ Jeżeli chcesz wyświetlić pomoc wpisz ``` demon -h ```
 ### Aby zainstalować program należy wykonać następujące komendy:
 * ```make```
 * ```sudo make install```
+
+## AUTORZY
+Projekt wykonali Tobiasz Dzieszkowski i Adrian Kryński ©2017
+
